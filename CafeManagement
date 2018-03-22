@@ -1,0 +1,455 @@
+#include<stdio.h>
+#include<conio.h>
+#include<alloc.h>
+#include<process.h>
+#include<string.h>
+#include<time.h>
+#include<dos.h>
+struct Coco
+{
+char name[20];
+int price;
+Coco *next;
+};
+
+struct list
+{
+char name[20];
+int cost;
+int quan;
+list *next;
+};
+
+Coco *l1=NULL,*l2=NULL,*l3=NULL,*l4=NULL,*l5=NULL,*l6=NULL,*l7=NULL,*l8=NULL,*l9=NULL,*l10=NULL;
+
+////////////////////////////////////////////////////////////////////////////
+Coco * Menu(Coco *ss=NULL)
+{
+l10=(Coco*)malloc(sizeof(Coco));
+strcpy(l10->name,"DARK FRAPPE");
+l10->price=180;
+l10->next=NULL;
+
+l9=(Coco*)malloc(sizeof(Coco));
+strcpy(l9->name,"HOT GOURMET COCOA");
+l9->price=220;
+l9->next=l10;
+
+l8=(Coco*)malloc(sizeof(Coco));
+strcpy(l8->name,"TROPICAL ICEBERG");
+l8->price=300;
+l8->next=l9;
+
+
+l7=(Coco*)malloc(sizeof(Coco));
+strcpy(l7->name,"CAPPUCCINO");
+l7->price=120;
+l7->next=l8;
+
+
+l6=(Coco*)malloc(sizeof(Coco));
+strcpy(l6->name,"HAZELNUT LATTE");
+l6->price=150;
+l6->next=l7;
+
+l5=(Coco*)malloc(sizeof(Coco));
+strcpy(l5->name,"MACCHIATO");
+l5->price=180;
+l5->next=l6;
+
+l4=(Coco*)malloc(sizeof(Coco));
+strcpy(l4->name,"CAFE MOCHA");
+l4->price=200;
+l4->next=l5;
+
+l3=(Coco*)malloc(sizeof(Coco));
+strcpy(l3->name,"ESPRESSO");
+l3->price=100;
+l3->next=l4;
+
+l2=(Coco*)malloc(sizeof(Coco));
+strcpy(l2->name,"IRISH COFFEE");
+l2->price=220;
+l2->next=l3;
+
+l1=(Coco*)malloc(sizeof(Coco));
+strcpy(l1->name,"CAFE AMERICANO");
+l1->price=250;
+l1->next=l2;
+ss=l1;
+return ss;
+}
+/////////////////////////////////////////////////////////////////////////////
+
+char *reload(char *ch1[])
+{
+int space=18;
+int l=space-strlen(*ch1);
+for(int i=0;i<l;i++)
+{
+strcat(*ch1," ");
+}
+return *ch1;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+void display(Coco *item=NULL)
+{
+char copy[20];
+printf("\n----------------------------------------\n");
+cprintf("------------------MENU------------------\n");
+printf("\r----------------------------------------\n");
+printf("  S.no.     BEVERAGES           PRICE \n");
+while(item!=NULL)
+{
+for(int i=1;i<=10;i++)
+{
+strcpy(copy,item->name);
+char *p1=copy;
+char *p2=reload(&p1);
+printf("  %d.\t %s     Rs %d",i,p2,item->price);
+printf("\n");
+item=item->next;
+}
+}
+printf("========================================\n");
+}
+
+////////////////////////////////////////////////////////////////////////////
+
+list * order(Coco *ss=NULL)
+{
+void Adder(list *,Coco *);
+Coco *item=NULL;
+char dish[20];
+int f;
+list *ord=NULL;
+char ans;
+
+do
+{
+if(ord==NULL)
+{
+while((getchar())!='\n');
+printf("What would you like to have : \n");
+gets(dish);
+item=ss;
+while(item!=NULL)
+{
+if(strcmp(item->name,dish)==0)
+{
+f=1;
+break;
+}
+item=item->next;
+}
+if(f!=1)
+{
+printf("\noops! order not found...read the menu carefully ");
+}
+else
+{
+ord=(list *)calloc(1,sizeof(list));
+strcpy(ord->name,item->name);
+printf(" Enter Quantity : ");
+scanf("%d",&ord->quan);
+ord->cost=(ord->quan)*(item->price);
+ord->next=NULL;
+}
+}//if
+else
+{
+Adder(ord,ss);
+break;
+}//else
+while((getchar())!='\n');
+printf("\n DO you want to order anything else Y/N : ");
+scanf("%c",&ans);
+}while((ans=='Y')||(ans=='y'));
+return ord;
+}//body
+/////////////////////////////////////////////////////////////////////////////
+
+void Adder(list *order=NULL,Coco *menu=NULL)
+{
+char dish[20];
+char ans;
+int f=0;
+
+if(order==NULL)
+{
+printf("\n You need to place an order before adding anything else!");
+}
+else
+{
+do
+{
+while((getchar())!='\n');
+printf("What would you like to have :\n");
+gets(dish);
+Coco *item=NULL;
+
+item=menu;
+while(item!=NULL)
+{
+if(strcmp(item->name,dish)==0)
+{
+f=1;
+break;
+}
+item=item->next;
+}
+if(f!=1)
+{
+printf("\n oops! order not found...read the menu carefully");
+}
+else
+{
+list *head=NULL,*end=NULL;
+end=(list *)calloc(1,sizeof(list));
+strcpy(end->name,item->name);
+printf(" Enter Quantity : ");
+scanf("%d",&end->quan);
+end->cost=(end->quan)*(item->price);
+end->next=NULL;
+head=order;
+while(head->next!=NULL)
+{
+head=head->next;
+}
+head->next=end;
+head=end=NULL;
+
+while((getchar())!='\n');
+printf("\n Do you want to order anything else Y/N : ");
+scanf("%c",&ans);
+}//else
+}while((ans=='Y')||(ans=='y'));
+}//else
+}//function body ends
+
+/////////////////////////////////////////////////////////////////////////////
+list * Subtractor(list *order=NULL)
+{
+char dish[20];
+fflush(stdin);
+printf("\nEnter the drink you want to remove : ");
+gets(dish);
+list *item=NULL,*end=NULL;
+if(strcmp(order->name,dish)==0)
+{
+printf(" %s has been removed from ur order \n",order->name);
+order=order->next;
+return order;
+}
+else
+{
+item=order;
+end=order->next;
+while(end!=NULL)
+{
+if(strcmp(end->name,dish)==0)
+{
+printf(" %s has been removed from ur order \n",end->name);
+item->next=end->next;
+break;
+}
+else
+{
+item=item->next;
+end=end->next;
+}
+}//while loop
+if(end==NULL)
+{
+printf("\n%s was not found in your order!",dish);
+}
+return order;
+}//else
+}//function body ends
+
+/////////////////////////////////////////////////////////////////////////////
+
+void showorder(list *bill=NULL)
+{
+int q=1;
+char copy[20];
+printf("\n======================ORDER==========================\n");
+printf("-----------------------------------------------------\n");
+printf(" S.no.   BEVERAGES           QUANTITY       PRICE \n");
+while(bill!=NULL)
+{
+strcpy(copy,bill->name);
+char *p1=copy;
+char *p2=reload(&p1);
+printf("  %d.     %s      %d          Rs %d",q,p2,bill->quan,bill->cost);
+printf("\n");
+//total=total+bill->cost;
+bill=bill->next;
+q++;
+}
+printf("=====================================================\n");
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+void billaaya(list *bill=NULL)
+{
+
+printf("$$$$$$$$$$$$$$$$$$$$$ CC JITTERS $$$$$$$$$$$$$$$$$$$$\n ");
+printf("cc jitters, Civil Lines, Haridwar Road, Uttarakhand \n");
+int q=1,total=0;
+char copy[20];
+printf("----------------------ORDER--------------------------\n");
+printf("-----------------------------------------------------\n");
+printf(" S.no.   BEVERAGES           QUANTITY       PRICE \n");
+while(bill!=NULL)
+{
+strcpy(copy,bill->name);
+char *p1=copy;
+char *p2=reload(&p1);
+printf("  %d.    %s       %d          Rs %d",q,p2,bill->quan,bill->cost);
+printf("\n");
+total=total+bill->cost;
+bill=bill->next;
+q++;
+}
+printf("-----------------------------------------------------\n");
+printf("             *** Total=Rs %d ***           ",total);
+printf("\n-----------------------------------------------------");
+cprintf("\r\n                   THANK YOU ! \n");
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+void main()
+{
+clrscr();
+textcolor(WHITE+BLINK);
+cprintf("\n                @@@@@@@@ Welcome to @@@@@@@@");
+cprintf("\r\n       @@@@@@@@@@@@@@@@  CC-JITTERS  @@@@@@@@@@@@@@@@");
+time_t t = time(NULL);
+    struct tm *tm = localtime(&t);
+    char s[64];
+    strftime(s, sizeof(s), "%c", tm);
+
+void display(Coco *);
+Coco *start=NULL;
+list *bill=NULL;
+char choice;
+int flag=0;
+start=Menu(start);
+
+do
+{
+printf("\n1. View Menu");
+printf("\n2. Place an Order");
+printf("\n3. Still Hungry!->ADD MORE");
+printf("\n4. Ordered too much->REMOVE");
+printf("\n5. View your Order");
+printf("\n6. $$$ Make BILL $$$");
+printf("\n7. EXIT\n");
+printf("Enter choice : ");
+scanf("%d",&choice);
+switch(choice)
+{
+case 1: display(start);
+	break;
+case 2: if(flag!=1)
+	{
+	bill=order(start);
+	flag=1;
+	break;
+	}
+	else
+	{
+	 printf("Payment Pending for previous order \n");
+	}
+case 3: if(bill!=NULL)
+	{
+	Adder(bill,start);
+	break;
+	}
+	else
+	{
+	 printf("You need to place an order first!\n");
+	 break;
+	}
+case 4: if(bill!=NULL)
+	{
+	bill=Subtractor(bill);
+	break;
+	}
+	else
+	{
+	 printf("Your order list is empty !\n");
+	break;
+	}
+case 5: if(bill!=NULL)
+	{
+	showorder(bill);
+	break;
+	}
+	else
+	{
+	 printf("You need to place an order first!\n");
+	break;
+	}
+case 6:
+      int c;
+      do
+      {
+      printf("\n Choose Payment Mode");
+      printf("\n1. Cash");
+      printf("\n2. Debit Card/Master Card");
+      printf("\n3. Paytm");
+      printf("\n Enter Choice : ");
+      scanf("%d",&c);
+      switch(c)
+      {
+	case 1: sleep(1);
+	printf("\nPayment through cash");
+	sleep(3);
+	break;
+	case 2: printf("\n Please swipe your card....");
+	sleep(2);
+	printf("\nPayment completed...collect the bill");
+	sleep(3);
+	break;
+	case 3: printf("\nScan the Bar Code given Below and press enter ");
+	printf("\n      #########");
+	printf("\n      #########");
+	printf("\n      #########");
+	printf("\n      #########");
+	printf("\n      #########\n");
+	getch();
+	sleep(2);
+	printf("\nPayment completed...collect the bill");
+	break;
+	default:printf("\n Invalid option");
+}
+}while(c!=1&&
+c!=2&&c!=3);
+
+	if(bill!=NULL)
+	{
+	printf("\n---------------------------------------------------\n");
+	printf("  %s\n\n", s);
+	billaaya(bill);
+	flag=0;
+	bill=NULL;
+	break;
+	}
+	else
+	{
+	 printf("\nYou need to place an order first!\n");
+	break;
+	}
+
+case 7: exit(1);
+default: printf("\n Invalid Request");
+}
+}while(choice!=7);
+getch();
+}
